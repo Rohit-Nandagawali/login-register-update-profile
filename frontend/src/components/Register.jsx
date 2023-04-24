@@ -19,7 +19,7 @@ const Register = () => {
 
     const getData = async() =>{
         console.log(name,email,password);
-        let result =await fetch('http://localhost:5000/register',{
+        let result =await fetch('https://login-register-update-profile-hduy.vercel.app:5000/register',{
             method: 'POST',
             body: JSON.stringify({name,email,password}),
             headers: {
