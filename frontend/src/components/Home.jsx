@@ -20,7 +20,7 @@ const Home = () => {
 
     const updateProfile =async ()=>{
         localStorage.setItem('user',JSON.stringify({name}))
-        let result =await fetch(`https://login-register-update-profile-hduy.vercel.app:5000/${id}`,{
+        let result =await fetch(`https://login-register-update-profile-hduy.vercel.app:${PORT}/${id}`,{
             method: 'PUT',
             body: JSON.stringify({name,password}),
             headers: {
