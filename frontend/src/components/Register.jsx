@@ -1,38 +1,56 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Button from "./Button";
-import { Link,useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 
-const Register = () => {
-    
-    const [name,setName] = useState("")
-    const [email,setEmail] = useState("")
-    const [password,setPassword] = useState("")
+const Register = ({ SERVER_URL }) => {
+
+    const [name, setName] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
     const navigate = useNavigate()
-    
-    useEffect(()=>{
+
+    const [showPass, setShowPass] = useState(true)
+
+    // handle show password
+    const handleShowPass = () => {
+        setShowPass(!showPass)
+    }
+
+    // if already logged in then directly redirect to homepage
+    useEffect(() => {
         const auth = localStorage.getItem("user")
-        if(auth){
+        if (auth) {
             navigate('/')
         }
-    },[])
+    }, [])
 
-    const getData = async() =>{
-        console.log(name,email,password);
-        let result =await fetch(`https://login-register-update-profile-hduy.vercel.app:${PORT}/register`,{
-            method: 'POST',
-            body: JSON.stringify({name,email,password}),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        result =await result.json()
-        console.warn(result);
 
-        if (result){
-            localStorage.setItem('user',JSON.stringify(result));
-            navigate('/')
+    // for registration
+    const registerUser = async () => {
+        console.log(name, email, password);
+        if (name && email && password) {
+            let result = await fetch(`${SERVER_URL}/register`, {
+                method: 'POST',
+                body: JSON.stringify({ name, email, password }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            result = await result.json()
+            console.warn(result);
+
+            if (result) {
+                localStorage.setItem('user', JSON.stringify(result));
+                navigate('/')
+                alert("Registration successful")
+            }
         }
+        // if all field are not correctly field
+        else{
+            alert("Please enter all data")
+        }
+
     }
     return (
         <div className="h-screen bg-gradient-to-br from-indigo-200 via-red-200 to-yellow-100 flex items-center justify-center ">
@@ -43,16 +61,21 @@ const Register = () => {
 
                 <div className="flex flex-col">
                     <label className="text-base font-medium mt-1" htmlFor="name">Your name</label>
-                    <input id="name" className="rounded-md p-2 my-1 outline-none" placeholder="First Last" type="text" onChange={(e)=>setName(e.target.value)} required />
+                    <input id="name" className="rounded-md p-2 my-1 outline-none" placeholder="First Lastname" type="text" onChange={(e) => setName(e.target.value)} required />
 
                     <label className="text-base font-medium mt-1" htmlFor="email">Email</label>
-                    <input id="email" className=" rounded-md p-2 my-1 outline-none" placeholder="abc@email.com" type="email" onChange={(e)=>setEmail(e.target.value)} required />
-
-
+                    <input id="email" className=" rounded-md p-2 my-1 outline-none" placeholder="abc@email.com" type="email" onChange={(e) => setEmail(e.target.value)} required />
                     <label className="text-base font-medium mt-1" htmlFor="password">Password</label>
-                    <input id="password" className="rounded-md p-2 my-1 outline-none" placeholder="password" type="password" onChange={(e)=>setPassword(e.target.value)} required />
 
-                    <div className="w-full" onClick={getData}  >
+                    {
+
+                        <input id="password" className="rounded-md p-2 my-1 outline-none" placeholder="password" type={showPass ? 'password' : 'text'} onChange={(e) => setPassword(e.target.value)} required />
+                    }
+                    <div onClick={handleShowPass} className="text-xs cursor-pointer text-blue-600">
+                        {!showPass ? 'Hide Password' : 'show Password'}
+                    </div>
+
+                    <div className="w-full" onClick={registerUser}  >
                         <Button text={"Create an account"} />
                     </div>
 

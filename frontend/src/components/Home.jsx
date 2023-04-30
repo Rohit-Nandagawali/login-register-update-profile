@@ -2,7 +2,8 @@ import { useState } from "react";
 import Button from "./Button";
 import { Link } from "react-router-dom";
 
-const Home = () => {
+
+const Home = ({SERVER_URL}) => {
     const auth= localStorage.getItem('user')
     
     const [name,setName] = useState(JSON.parse(auth).name)
@@ -16,11 +17,12 @@ const Home = () => {
 
     const logout=()=>{
         localStorage.clear()
+        alert("Logout Successfully")
     }
 
     const updateProfile =async ()=>{
         localStorage.setItem('user',JSON.stringify({name}))
-        let result =await fetch(`https://login-register-update-profile-hduy.vercel.app:${PORT}/${id}`,{
+        let result =await fetch(`${SERVER_URL}/${id}`,{
             method: 'PUT',
             body: JSON.stringify({name,password}),
             headers: {

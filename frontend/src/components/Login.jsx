@@ -2,11 +2,18 @@ import { useState,useEffect } from "react";
 import Button from "./Button";
 import { Link,useNavigate } from 'react-router-dom'
 
-const Login = () => {
+const Login = ({SERVER_URL}) => {
 
     const [email,setEmail] = useState("")
     const [password,setPassword] = useState("")
     const navigate = useNavigate()
+
+    const [showPass,setShowPass] = useState(true)
+
+    // handle show password
+    const handleShowPass =()=>{
+        setShowPass(!showPass)
+    }
 
     useEffect(()=>{
         const auth = localStorage.getItem("user")
@@ -18,7 +25,7 @@ const Login = () => {
     const getData=async() =>{
 
        
-        let result =await fetch(`https://login-register-update-profile-hduy.vercel.app:${PORT}/login`,{
+        let result =await fetch(`${SERVER_URL}/login`,{
             method: 'POST',
             body: JSON.stringify({email,password}),
             headers: {
@@ -31,6 +38,7 @@ const Login = () => {
         if(result.name){
             localStorage.setItem('user',JSON.stringify(result))
             navigate('/')
+            alert("Login Successful")
         }else{
             alert("Please enter correct details")
         }
@@ -49,7 +57,11 @@ const Login = () => {
 
 
                     <label className="text-base font-medium mt-1" htmlFor="password">Password</label>
-                    <input id="password" className="rounded-md p-2 my-1 outline-none" placeholder="password" type="password" required onChange={(e)=>setPassword(e.target.value)}/>
+                    <input id="password" className="rounded-md p-2 my-1 outline-none" placeholder="password" type={showPass?'password':'text'}  required onChange={(e)=>setPassword(e.target.value)}/>
+
+                    <div onClick={handleShowPass} className="text-xs cursor-pointer text-blue-600">
+                      { !showPass ?'Hide Password':'show Password'}
+                        </div>
 
                     <div className="w-full" onClick={getData}>
 
